@@ -8,13 +8,16 @@ public class SnakeMovement : MonoBehaviour
     {
         Vector2 forwardPosition = transform.localPosition + transform.up * transform.localScale.x;
 
-        Debug.Log(forwardPosition);
+        //Debug.Log(forwardPosition);
 
         transform.localPosition = forwardPosition;
     }
 
-    public void ChangeDirection()
+    //  Rotate the head of the snake in a 90 degree angle to the left or to the right
+    public void ChangeDirection(bool doTurnLeft)
     {
-        transform.Rotate(Vector3.forward * 90f);
+        float rotationDirection = doTurnLeft ? 1 : -1;
+
+        transform.Rotate(Vector3.forward * (90f * rotationDirection));
     }
 }

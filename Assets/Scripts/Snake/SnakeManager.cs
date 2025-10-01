@@ -16,26 +16,6 @@ public class SnakeManager : MonoBehaviour
         movement = GetComponent<SnakeMovement>();
     }
 
-    private void Update()
-    {
-        if (Input.touchCount > 0)
-        {
-            var a = Input.GetTouch(0);
-
-            if (a.phase == TouchPhase.Began)
-            {
-                startPosition = a.position;
-                StartMoving();
-            }
-            if (a.phase == TouchPhase.Ended)
-            {
-                endPosition = a.position;
-
-                movement.ChangeDirection();
-            }
-        }
-    }
-
     public void StartMoving()
     {
         if (isMoving == true)
@@ -61,3 +41,5 @@ public class SnakeManager : MonoBehaviour
 
     }
 }
+
+public enum ESnakeDirection { Invalid, Up, Down, Left, Right }
