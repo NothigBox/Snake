@@ -7,14 +7,29 @@ public class SnakeManager : MonoBehaviour
     [SerializeField] float movesPerSecond;
 
     SnakeMovement movement;
+    SnakeScore score;
+
     bool isMoving;
+    bool canChangeDirection;
     ESnakeDirection currentDirection;
 
     private void Awake()
     {
         isMoving = false;
+        canChangeDirection = true;
         currentDirection = ESnakeDirection.Up;
         movement = GetComponent<SnakeMovement>();
+        score = GetComponent<SnakeScore>();
+    }
+
+    private void OnEnable()
+    {
+        score.OnFoodReached += movement.AddBodyPart;
+    }
+
+    private void OnDisable()
+    {
+        score.OnFoodReached -= movement.AddBodyPart;
     }
 
     public void StartMoving()
@@ -36,11 +51,19 @@ public class SnakeManager : MonoBehaviour
 
             yield return new WaitForSeconds(period);
             movement.MoveForward();
+
+            //  Direction can be changed only after the snake moved forward
+            canChangeDirection = true;
         }
     }
 
     public void TryToChangeDirection(ESnakeDirection newDirection)
     {
+        if(canChangeDirection == false)
+        {
+            return;
+        }
+
         if(isMoving == false)
         {
             StartMoving();
@@ -53,6 +76,7 @@ public class SnakeManager : MonoBehaviour
 
         bool? doLocalTurnLeft = null;
         
+        //  Only change the direction if it's traspassing between the Horizontal and the Vertical axis
         switch (currentDirection)
         {
             case ESnakeDirection.Left:
@@ -119,6 +143,9 @@ public class SnakeManager : MonoBehaviour
         if(doLocalTurnLeft != null)
         {
             movement.ChangeDirection(doLocalTurnLeft.Value);
+
+            //  After changing the direction, you can't change it until the snake moves forward
+            canChangeDirection = false;
         }
 
     }

@@ -44,7 +44,7 @@ public class TouchManager : MonoBehaviour
             //  Determine what axis is greater in magnitude
             if(absX != absY)
             {
-                if (absX > absY)
+                if (absX > absY && absX - absY > 10f)
                 {
                     //  Movement is horizontal
                     if (delta.x < 0)
@@ -56,7 +56,7 @@ public class TouchManager : MonoBehaviour
                         newDirection = ESnakeDirection.Right;
                     }
                 }
-                else 
+                else if(absY - absX > 10f)
                 {
                     //  Movement is vertical
                     if (delta.y < 0)
@@ -70,7 +70,7 @@ public class TouchManager : MonoBehaviour
                 }
             }
 
-            //Debug.Log($"Delta: {delta}");
+            Debug.Log($"Delta: {delta}");
             Debug.Log($"New Direction: {newDirection}");
 
             OnChangeDirection?.Invoke(newDirection);

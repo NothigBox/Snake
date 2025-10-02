@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
+    [SerializeField] GameObject bodyPart;
     [SerializeField] List<Transform> bodyParts;
+
+    Vector2 lastTailPosition;
 
     private void Awake()
     {
@@ -17,14 +20,16 @@ public class SnakeMovement : MonoBehaviour
 
         //Debug.Log(forwardPosition);
 
+        lastTailPosition = bodyParts[bodyParts.Count - 1].position;
+
         for (int i = bodyParts.Count-1; i > 0; i--)
         {
-            bodyParts[i].localPosition = bodyParts[i-1].localPosition;
+            bodyParts[i].position = bodyParts[i-1].position;
         }
 
-        bodyParts[0].localPosition = transform.localPosition;
+        bodyParts[0].position = transform.position;
 
-        transform.localPosition = forwardPosition;
+        transform.position = forwardPosition;
     }
 
     //  Rotate the head of the snake in a 90 degree angle to the left or to the right
@@ -33,5 +38,11 @@ public class SnakeMovement : MonoBehaviour
         float rotationDirection = doTurnLeft ? 1 : -1;
 
         transform.Rotate(Vector3.forward * (90f * rotationDirection));
+    }
+
+    public void AddBodyPart()
+    {
+        GameObject newBodyPart = Instantiate(bodyPart, lastTailPosition, Quaternion.identity);
+        bodyParts.Add(newBodyPart.transform);
     }
 }
