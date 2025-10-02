@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class TouchManager : MonoBehaviour
     PlayerInput input;
 
     InputAction changeDirection;
+
+    public Action<ESnakeDirection> OnChangeDirection;
 
     private void Awake()
     {
@@ -67,8 +70,10 @@ public class TouchManager : MonoBehaviour
                 }
             }
 
-            Debug.Log($"Delta: {delta}");
+            //Debug.Log($"Delta: {delta}");
             Debug.Log($"New Direction: {newDirection}");
+
+            OnChangeDirection?.Invoke(newDirection);
         }
     }
 }

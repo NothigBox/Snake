@@ -4,11 +4,25 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
+    [SerializeField] List<Transform> bodyParts;
+
+    private void Awake()
+    {
+        //bodyParts = new List<Transform>();
+    }
+
     public void MoveForward()
     {
         Vector2 forwardPosition = transform.localPosition + transform.up * transform.localScale.x;
 
         //Debug.Log(forwardPosition);
+
+        for (int i = bodyParts.Count-1; i > 0; i--)
+        {
+            bodyParts[i].localPosition = bodyParts[i-1].localPosition;
+        }
+
+        bodyParts[0].localPosition = transform.localPosition;
 
         transform.localPosition = forwardPosition;
     }
