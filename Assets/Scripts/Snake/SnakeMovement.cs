@@ -8,11 +8,9 @@ public class SnakeMovement : MonoBehaviour
     [SerializeField] List<Transform> bodyParts;
 
     Vector2 lastTailPosition;
+    Quaternion lastTailRotation;
 
-    private void Awake()
-    {
-        //bodyParts = new List<Transform>();
-    }
+    public List<Transform> BodyParts => bodyParts;
 
     public void MoveForward()
     {
@@ -21,13 +19,16 @@ public class SnakeMovement : MonoBehaviour
         //Debug.Log(forwardPosition);
 
         lastTailPosition = bodyParts[bodyParts.Count - 1].position;
+        lastTailRotation = bodyParts[bodyParts.Count - 1].rotation;
 
         for (int i = bodyParts.Count-1; i > 0; i--)
         {
             bodyParts[i].position = bodyParts[i-1].position;
+            bodyParts[i].rotation = bodyParts[i - 1].rotation;
         }
 
         bodyParts[0].position = transform.position;
+        bodyParts[0].rotation = transform.rotation;
 
         transform.position = forwardPosition;
     }
@@ -42,7 +43,7 @@ public class SnakeMovement : MonoBehaviour
 
     public void AddBodyPart()
     {
-        GameObject newBodyPart = Instantiate(bodyPart, lastTailPosition, Quaternion.identity);
+        GameObject newBodyPart = Instantiate(bodyPart, lastTailPosition, lastTailRotation);
         bodyParts.Add(newBodyPart.transform);
     }
 }

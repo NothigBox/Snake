@@ -70,8 +70,8 @@ public class TouchManager : MonoBehaviour
                 }
             }
 
-            Debug.Log($"Delta: {delta}");
-            Debug.Log($"New Direction: {newDirection}");
+            //Debug.Log($"Delta: {delta}");
+            //Debug.Log($"New Direction: {newDirection}");
 
             OnChangeDirection?.Invoke(newDirection);
         }

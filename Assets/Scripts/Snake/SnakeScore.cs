@@ -11,8 +11,11 @@ public class SnakeScore : MonoBehaviour
     {
         if(collision.CompareTag("Food") == true)
         {
-            collision.gameObject.SetActive(false);
-            OnFoodReached?.Invoke();
+            var a = collision.GetComponent<Food>();
+            if(a != null)
+            {
+                a.Eat();
+            }
         }
         else if(collision.CompareTag("Body") == true)
         {

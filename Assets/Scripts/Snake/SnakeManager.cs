@@ -13,6 +13,8 @@ public class SnakeManager : MonoBehaviour
     bool canChangeDirection;
     ESnakeDirection currentDirection;
 
+    public List<Transform> Body => movement.BodyParts;
+
     private void Awake()
     {
         isMoving = false;
@@ -148,6 +150,21 @@ public class SnakeManager : MonoBehaviour
             canChangeDirection = false;
         }
 
+    }
+
+    public void Grow()
+    {
+        movement.AddBodyPart();
+    }
+
+    public List<Transform> GetBody() 
+    {
+        List<Transform> result = new List<Transform>();
+
+        result.Add(transform);
+        result.AddRange(movement.BodyParts);
+
+        return result;
     }
 }
 
