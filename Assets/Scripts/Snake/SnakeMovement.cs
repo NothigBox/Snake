@@ -18,17 +18,25 @@ public class SnakeMovement : MonoBehaviour
 
         //Debug.Log(forwardPosition);
 
-        lastTailPosition = bodyParts[bodyParts.Count - 1].position;
-        lastTailRotation = bodyParts[bodyParts.Count - 1].rotation;
-
-        for (int i = bodyParts.Count-1; i > 0; i--)
+        if (bodyParts.Count > 0)
         {
-            bodyParts[i].position = bodyParts[i-1].position;
-            bodyParts[i].rotation = bodyParts[i - 1].rotation;
-        }
+            lastTailPosition = bodyParts[bodyParts.Count - 1].position;
+            lastTailRotation = bodyParts[bodyParts.Count - 1].rotation;
 
-        bodyParts[0].position = transform.position;
-        bodyParts[0].rotation = transform.rotation;
+            for (int i = bodyParts.Count-1; i > 0; i--)
+            {
+                bodyParts[i].position = bodyParts[i-1].position;
+                bodyParts[i].rotation = bodyParts[i - 1].rotation;
+            }
+
+            bodyParts[0].position = transform.position;
+            bodyParts[0].rotation = transform.rotation;
+        }
+        else
+        {
+            lastTailPosition = transform.position;
+            lastTailRotation = transform.rotation;
+        }
 
         transform.position = forwardPosition;
     }
@@ -44,6 +52,7 @@ public class SnakeMovement : MonoBehaviour
     public void AddBodyPart()
     {
         GameObject newBodyPart = Instantiate(bodyPart, lastTailPosition, lastTailRotation);
+        newBodyPart.transform.localScale = transform.localScale;
         bodyParts.Add(newBodyPart.transform);
     }
 }

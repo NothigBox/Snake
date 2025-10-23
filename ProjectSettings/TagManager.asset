@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Body
+  - Limit
   layers:
   - Default
   - TransparentFX

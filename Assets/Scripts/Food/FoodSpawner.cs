@@ -15,7 +15,7 @@ public class FoodSpawner : MonoBehaviour
 
     public Apple SpawnApple(Vector2 position)
     {
-        Apple newApple = Instantiate(apple, position, Quaternion.identity);
+        Apple newApple = applePool.GetObject(position);
         return newApple;
     }
 }

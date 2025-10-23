@@ -6,20 +6,26 @@ using UnityEngine;
 public class SnakeScore : MonoBehaviour
 {
     public Action OnFoodReached;
+    public Action OnBodyReached;
+    public Action OnLimitReached;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Food") == true)
+        if (collision.CompareTag("Food") == true)
         {
-            var a = collision.GetComponent<Food>();
-            if(a != null)
+            var food = collision.GetComponent<Food>();
+            if (food != null)
             {
-                a.Eat();
+                food.Eat();
             }
         }
-        else if(collision.CompareTag("Body") == true)
+        else if (collision.CompareTag("Body") == true)
         {
-            gameObject.SetActive(false);
+            OnBodyReached?.Invoke();
+        }
+        else if (collision.CompareTag("Limit") == true)
+        {
+            OnLimitReached?.Invoke();
         }
     }
 }
