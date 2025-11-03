@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    Vector2 OUT_OF_MAP = new Vector2 (0f, 1000f);
+
     [SerializeField] FoodManager food;
     [SerializeField] MapGrid map;
     [SerializeField] TouchManager touch;
@@ -15,6 +17,8 @@ public class LevelManager : MonoBehaviour
 
     public Action OnGameOver;
 
+    private Vector3 WorldScale => Vector3.one * map.CellSize;
+
     private void Awake()
     {
         isGameOver = null;
@@ -23,15 +27,18 @@ public class LevelManager : MonoBehaviour
     private void OnEnable()
     {
         snake.OnDied += EndLevel;
+        snake.OnInitialGrow += SpawnBody;
+
         touch.OnChangeDirection += TryToChangeDirection;
         map.OnCellSizeCalculated += snake.SetInitialValues;
         Food.OnEaten += OnFoodEaten;
-
-        //StartLevel();
     }
 
     private void OnDisable()
     {
+        snake.OnDied -= EndLevel;
+        snake.OnInitialGrow = null;
+
         touch.OnChangeDirection -= TryToChangeDirection;
         map.OnCellSizeCalculated -= snake.SetInitialValues;
         Food.OnEaten -= OnFoodEaten;
@@ -39,6 +46,7 @@ public class LevelManager : MonoBehaviour
 
     public void StartLevel()
     {
+        snake.gameObject.SetActive(true);
         isGameOver = false;
         map.CalculateCellSize();
         SpawnLimits();
@@ -47,7 +55,7 @@ public class LevelManager : MonoBehaviour
 
     void OnFoodEaten(Food food)
     {
-        snake.Grow();
+        SpawnBody();
         SpawnFoodAtRandomCell();
     }
 
@@ -57,7 +65,8 @@ public class LevelManager : MonoBehaviour
 
         var randomPosition = map.GetRandomAvailablePosition(snakeBodyArray);
 
-        food.SpawnFood(randomPosition);
+        Apple newApple = factory.GetApple(randomPosition);
+        newApple.transform.localScale = WorldScale;
     }
 
     void EndLevel()
@@ -81,7 +90,58 @@ public class LevelManager : MonoBehaviour
         for (int i = 0; i < limitPositions.Count; i++)
         {
             MapLimit newLimit = factory.GetLimit(limitPositions[i]);
-            newLimit.transform.localScale = snake.transform.localScale;
+            newLimit.transform.localScale = WorldScale;
         }
+    }
+
+    void SpawnBody()
+    {
+        Body newBody = factory.GetBody(OUT_OF_MAP);
+        newBody.transform.localScale = WorldScale;
+        snake.Grow(newBody);
+    }
+
+    public void ResetLevel()
+    {
+        ClearLevel();
+
+        StartLevel();
+    }
+
+    public void ClearLevel()
+    {
+        factory.DeactivateAllObjects();
+
+        snake.gameObject.SetActive(false);
+    }
+
+    public void SetMapSize(int mapIndex)
+    {
+        Vector2 size = default;
+
+        switch (mapIndex)
+        {
+            case 0:
+                size = new Vector2(5, 11);
+                break;
+
+            case 1:
+                size = new Vector2(10, 22);
+                break;
+
+            case 2:
+                size = new Vector2(15, 33);
+                break;
+        }
+
+        if(size != default)
+        {
+            map.SetMapSize(size);
+        }
+    }
+
+    public void SetSnakeSpeed(float speed)
+    {
+        snake.SetSpeed(speed);
     }
 }

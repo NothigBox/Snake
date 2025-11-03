@@ -20,12 +20,10 @@ public class SnakeManager : MonoBehaviour
     ESnakeDirection currentDirection;
 
     public Action OnDied;
+    public Action OnInitialGrow;
 
     private void Awake()
     {
-        isMoving = false;
-        canChangeDirection = true;
-        currentDirection = ESnakeDirection.Up;
         movement = GetComponent<SnakeMovement>();
         score = GetComponent<SnakeScore>();
         animator = GetComponent<Animator>();
@@ -33,16 +31,25 @@ public class SnakeManager : MonoBehaviour
 
     private void OnEnable()
     {
-        score.OnFoodReached += movement.AddBodyPart;
+        SetUp();
+
         score.OnBodyReached += Die;
         score.OnLimitReached += Die;
     }
 
     private void OnDisable()
     {
-        score.OnFoodReached -= movement.AddBodyPart;
         score.OnBodyReached -= Die;
         score.OnLimitReached -= Die;
+    }
+
+    private void SetUp()
+    {
+        isMoving = false;
+        canChangeDirection = true;
+        currentDirection = ESnakeDirection.Up;
+        transform.rotation = Quaternion.identity;
+        movement.BodyParts.Clear();
     }
 
     public void StartMoving()
@@ -55,16 +62,12 @@ public class SnakeManager : MonoBehaviour
 
         DoTongueAnimation();
         StartCoroutine(MoveForwardCoroutine());
-
-        //  Make the snake grow after the game starts
-        for (int i = 0; i < INITIAL_BODY_COUNT; i++)
-        {
-            Grow();
-        }
     }
 
     IEnumerator MoveForwardCoroutine()
     {
+        int growCounter = 0;
+
         while (isMoving == true)
         {
             float period = 1 / movesPerSecond;
@@ -74,6 +77,14 @@ public class SnakeManager : MonoBehaviour
 
             //  Direction can be changed only after the snake moved forward
             canChangeDirection = true;
+
+            //  Make the snake grow after the game starts
+            if(growCounter < INITIAL_BODY_COUNT)
+            {
+                OnInitialGrow?.Invoke();
+                
+                growCounter++;
+            }
         }
     }
 
@@ -182,15 +193,15 @@ public class SnakeManager : MonoBehaviour
         {
             movement.ChangeDirection(doLocalTurnLeft.Value);
 
-            //  After changing the direction, you can't change it until the snake moves forward
+            //  After changing the direction, you can't change it again until the snake moves forward
             canChangeDirection = false;
         }
 
     }
 
-    public void Grow()
+    public void Grow(Body body)
     {
-        movement.AddBodyPart();
+        movement.AddBodyPart(body);
     }
 
     public void SetInitialValues(float size, Vector2 position)
@@ -199,14 +210,25 @@ public class SnakeManager : MonoBehaviour
 
         transform.localScale = scale;
         transform.position = position;
+
+        movement.SetInitialPosition();
+    }
+
+    public void SetSpeed(float speed)
+    {
+        movesPerSecond = speed;
     }
 
     public List<Transform> GetBody() 
     {
         List<Transform> result = new List<Transform>();
 
+        for(int i = 0; i < movement.BodyParts.Count; i++)
+        {
+            result.Add(movement.BodyParts[i].transform);
+        }
+
         result.Add(transform);
-        result.AddRange(movement.BodyParts);
 
         return result;
     }

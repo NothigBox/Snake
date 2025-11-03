@@ -6,7 +6,7 @@ public class ObjectsPool<T> : Object where T : PoolObject
 {
     private T objectPrefab;
 
-    private List<T> allObjects;
+    public List<T> allObjects;
     private List<T> availableObjects;
     private List<T> unavailableObjects;
 

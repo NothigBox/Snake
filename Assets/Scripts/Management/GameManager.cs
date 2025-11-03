@@ -15,13 +15,32 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        ui.SetPanel(EUIPanel.Home);
+        GoHome();
     }
 
     public void GoPlay()
     {
         level.StartLevel();
+
+        //   Call this function in order to set the Time scale to 1
         OptionsSetActive(false);
+    }
+
+    public void GoHome()
+    {
+        level.ClearLevel();
+
+        ui.SetPanel(EUIPanel.Home);
+    }
+
+    public void GoSettings()
+    {
+        ui.SetPanel(EUIPanel.Settings);
+    }
+
+    public void GoAbout()
+    {
+        ui.SetPanel(EUIPanel.About);
     }
 
     void GameOver()
@@ -29,7 +48,7 @@ public class GameManager : MonoBehaviour
         ShowResult(1f);
     }
 
-    public void ResetLevel()
+    public void ResetScene()
     {
         SceneManager.LoadScene("MainScene");
     }
@@ -48,7 +67,7 @@ public class GameManager : MonoBehaviour
     {
         if (newActive == true)
         {
-            ui.SetPanel(EUIPanel.Options);
+            ui.SetPanel(EUIPanel.Pause);
         }
         else
         {
@@ -56,5 +75,23 @@ public class GameManager : MonoBehaviour
         }
 
         Time.timeScale = newActive ? 0f : 1f;
+    }
+
+    public void ResetGame()
+    {
+        level.ResetLevel();
+
+        //   Call this function in order to set the Time scale to 1
+        OptionsSetActive(false);
+    }
+
+    public void SetMap(int mapIndex)
+    {
+        level.SetMapSize(mapIndex);
+    }
+
+    public void SetSpeed(float speed)
+    {
+        level.SetSnakeSpeed(speed);
     }
 }

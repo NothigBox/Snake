@@ -4,38 +4,35 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
-    [SerializeField] GameObject bodyPart;
-    [SerializeField] List<Transform> bodyParts;
+    [SerializeField] List<Body> bodyParts;
 
     Vector2 lastTailPosition;
     Quaternion lastTailRotation;
 
-    public List<Transform> BodyParts => bodyParts;
+    public List<Body> BodyParts => bodyParts;
 
+    public void SetInitialPosition()
+    {
+        SetLastTailInfo(transform);
+    }
+
+    //  Move the head of the snake towards Vector3.forward, and make its body follow it
     public void MoveForward()
     {
         Vector2 forwardPosition = transform.localPosition + transform.up * transform.localScale.x;
 
-        //Debug.Log(forwardPosition);
-
         if (bodyParts.Count > 0)
         {
-            lastTailPosition = bodyParts[bodyParts.Count - 1].position;
-            lastTailRotation = bodyParts[bodyParts.Count - 1].rotation;
+            SetLastTailInfo(bodyParts[bodyParts.Count - 1].transform);
 
-            for (int i = bodyParts.Count-1; i > 0; i--)
+            //  Begin from the last body part, and make each one take the next-one's position and rotation
+            for (int i = bodyParts.Count - 1; i > 0; i--)
             {
-                bodyParts[i].position = bodyParts[i-1].position;
-                bodyParts[i].rotation = bodyParts[i - 1].rotation;
+                bodyParts[i].SetPositionAndRotation(bodyParts[i - 1].transform);
             }
 
-            bodyParts[0].position = transform.position;
-            bodyParts[0].rotation = transform.rotation;
-        }
-        else
-        {
-            lastTailPosition = transform.position;
-            lastTailRotation = transform.rotation;
+            // Make the nearest part to the head take the head's previous position and rotation
+            bodyParts[0].SetPositionAndRotation(transform);
         }
 
         transform.position = forwardPosition;
@@ -49,10 +46,24 @@ public class SnakeMovement : MonoBehaviour
         transform.Rotate(Vector3.forward * (90f * rotationDirection));
     }
 
-    public void AddBodyPart()
+    public void AddBodyPart(Body body)
     {
-        GameObject newBodyPart = Instantiate(bodyPart, lastTailPosition, lastTailRotation);
-        newBodyPart.transform.localScale = transform.localScale;
-        bodyParts.Add(newBodyPart.transform);
+        if(bodyParts.Count > 0)
+        {
+            body.SetPositionAndRotation(lastTailPosition, lastTailRotation);
+        }
+        else
+        {
+            //  Make the first body part spawn with the current rotation of the head
+            body.SetPositionAndRotation(lastTailPosition, transform.rotation);
+        }
+
+        bodyParts.Add(body);
+    }
+
+    private void SetLastTailInfo(Transform transform)
+    {
+        lastTailPosition = transform.position;
+        lastTailRotation = transform.rotation;
     }
 }

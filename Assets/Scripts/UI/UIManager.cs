@@ -1,13 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Panels")]
     [SerializeField] GameObject home;
     [SerializeField] GameObject gameplay;
-    [SerializeField] GameObject options;
+    [SerializeField] GameObject pause;
     [SerializeField] GameObject result;
+    [SerializeField] GameObject settings;
+    [SerializeField] GameObject about;
+
+    [Header("Map Size Buttons")]
+    [SerializeField] Color SelectedColor;
+    [SerializeField] Button[] mapSizes;
 
     public void SetPanel(EUIPanel panel)
     {
@@ -23,12 +31,20 @@ public class UIManager : MonoBehaviour
                 gameplay.SetActive(true);
                 break;
 
-            case EUIPanel.Options:
-                options.SetActive(true);
+            case EUIPanel.Pause:
+                pause.SetActive(true);
                 break;
 
             case EUIPanel.Result:
                 result.SetActive(true);
+                break;
+
+            case EUIPanel.Settings:
+                settings.SetActive(true);
+                break;
+
+            case EUIPanel.About:
+                about.SetActive(true);
                 break;
         }
     }
@@ -37,9 +53,16 @@ public class UIManager : MonoBehaviour
     {
         home.SetActive(false);
         gameplay.SetActive(false);
-        options.SetActive(false);
+        pause.SetActive(false);
         result.SetActive(false);
+        settings.SetActive(false);
+        about.SetActive(false);
+    }
+
+    public void SetSelectedMapSize(int mapIndex)
+    {
+        
     }
 }
 
-public enum EUIPanel { Home, Gameplay, Options, Result }
+public enum EUIPanel { Home, Gameplay, Pause, Result, Settings, About }

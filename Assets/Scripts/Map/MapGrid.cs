@@ -16,6 +16,11 @@ public class MapGrid : MonoBehaviour
 
     public Action<float, Vector2> OnCellSizeCalculated;
 
+    /// <summary>
+    /// The scale that objects must have in Unity
+    /// </summary>
+    public float CellSize => cellSize;
+
     private void OnDrawGizmos()
     {
         for (int x = 0; x < width; x++)
@@ -269,26 +274,23 @@ public class MapGrid : MonoBehaviour
 
         for (int y = -1; y <= height + 1; y += height + 1)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = -1; x < width + 1; x++)
             {
                 Vector2 position = FromCellToPosition(new Vector2(x, y));
                 upDown.Add(position);
             }
         }
 
-        /*
-        Debug.Log("Sideways limits:");
-
-        for (int i = 0; i < leftRight.Count; i++)
-        {
-            Debug.Log(leftRight[i]);
-        }
-        */
-
         List<Vector2> limits = new List<Vector2>();
         limits.AddRange(leftRight);
         limits.AddRange(upDown);
 
         return limits;
+    }
+
+    public void SetMapSize(Vector3 mapSize) 
+    {
+        width = Mathf.RoundToInt(mapSize.x);
+        height = Mathf.RoundToInt(mapSize.y);
     }
 }
