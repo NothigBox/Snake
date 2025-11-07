@@ -13,6 +13,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] SnakeManager snake;
     [SerializeField] FactoryController factory;
 
+    private int initialApplesCount = 1;
+
     bool? isGameOver;
 
     public Action OnGameOver;
@@ -50,7 +52,8 @@ public class LevelManager : MonoBehaviour
         isGameOver = false;
         map.CalculateCellSize();
         SpawnLimits();
-        SpawnFoodAtRandomCell();
+        SpawnInitialApples();
+        FillTiles();
     }
 
     void OnFoodEaten(Food food)
@@ -61,12 +64,27 @@ public class LevelManager : MonoBehaviour
 
     void SpawnFoodAtRandomCell()
     {
-        Transform[] snakeBodyArray = snake.GetBody().ToArray();
+        List<Transform> unavailableCells = new List<Transform>();
+        List<Transform> bodyParts = snake.GetBody();
+        List<Apple> apples = factory.ActiveApples;
 
-        var randomPosition = map.GetRandomAvailablePosition(snakeBodyArray);
+        List<Transform> applesList = new List<Transform>();
 
-        Apple newApple = factory.GetApple(randomPosition);
-        newApple.transform.localScale = WorldScale;
+        for (int i = 0; i < apples.Count; i++)
+        {
+            applesList.Add(apples[i].transform);
+        }
+
+        unavailableCells.AddRange(bodyParts);
+        unavailableCells.AddRange(applesList);
+
+        var randomPosition = map.GetRandomAvailablePosition(unavailableCells.ToArray());
+
+        if(randomPosition != null)
+        {
+            Apple newApple = factory.GetApple(randomPosition.Value);
+            newApple.transform.localScale = WorldScale;
+        }
     }
 
     void EndLevel()
@@ -101,6 +119,14 @@ public class LevelManager : MonoBehaviour
         snake.Grow(newBody);
     }
 
+    void SpawnInitialApples()
+    {
+        for (int i = 0; i < initialApplesCount; i++)
+        {
+            SpawnFoodAtRandomCell();
+        }
+    }
+
     public void ResetLevel()
     {
         ClearLevel();
@@ -113,6 +139,8 @@ public class LevelManager : MonoBehaviour
         factory.DeactivateAllObjects();
 
         snake.gameObject.SetActive(false);
+
+        isGameOver = null;
     }
 
     public void SetMapSize(int mapIndex)
@@ -143,5 +171,57 @@ public class LevelManager : MonoBehaviour
     public void SetSnakeSpeed(float speed)
     {
         snake.SetSpeed(speed);
+    }
+
+    public void SetInitialApplesCount(int initialApplesCount)
+    {
+        this.initialApplesCount = initialApplesCount;
+    }
+
+    public void FillTiles()
+    {
+        var gridCells = map.GetFullGridCells();
+        int evenIndex = 0;
+
+        for (int i = 0; i < gridCells.Count; i++)
+        {
+            var position = map.FromCellToPosition(gridCells[i]);
+            MapTile newTile = default;
+
+            //  Fills the map as in chess, with alternating cells
+            if (gridCells.Count % 2 == 0)
+            {
+                if(i % 2 == 0)
+                {
+                    newTile = factory.GetTileA(position);
+                }
+                else
+                {
+                    newTile = factory.GetTileB(position);
+                }
+            }
+            //  Fills the map as columns of the same type of tiles when the total amount of tiles is even
+            else
+            {
+                int rowIndex = Mathf.FloorToInt(evenIndex / map.Width);
+                if (rowIndex % 2 != 0)
+                {
+                    evenIndex = 1;
+                }
+
+                if (evenIndex % 2 == 0)
+                {
+                    newTile = factory.GetTileA(position);
+                }
+                else
+                {
+                    newTile = factory.GetTileB(position);
+                }
+
+                evenIndex++;
+            }
+
+                newTile.transform.localScale = WorldScale;
+        }
     }
 }

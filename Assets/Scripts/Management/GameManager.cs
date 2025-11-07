@@ -88,10 +88,16 @@ public class GameManager : MonoBehaviour
     public void SetMap(int mapIndex)
     {
         level.SetMapSize(mapIndex);
+        ui.SetSelectedMapSize(mapIndex);
     }
 
     public void SetSpeed(float speed)
     {
         level.SetSnakeSpeed(speed);
+    }
+
+    public void SetInitialApplesCount(float count)
+    {
+        level.SetInitialApplesCount((int) count);
     }
 }

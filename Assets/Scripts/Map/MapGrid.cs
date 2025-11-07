@@ -20,6 +20,7 @@ public class MapGrid : MonoBehaviour
     /// The scale that objects must have in Unity
     /// </summary>
     public float CellSize => cellSize;
+    public int Width => width;
 
     private void OnDrawGizmos()
     {
@@ -39,29 +40,36 @@ public class MapGrid : MonoBehaviour
         }
     }
 
-    public Vector2 GetRandomAvailablePosition(params Transform[] unavailablePositions)
+    public Vector2? GetRandomAvailablePosition(Transform[] unavailablePositions)
     {
         //  Convert snake body's positions into cell coordinates
-        Vector2 result = Vector2.zero;
+        Vector2? result = Vector2.zero;
 
         List<Vector2> unavailableCells = new List<Vector2>();
 
         for (int i = 0; i < unavailablePositions.Length; i++)
         {
+            bool canAddCell = true;
             Vector2 cell = FromPositionToCell(unavailablePositions[i].position);
-            unavailableCells.Add(cell);
+
+            /*
+            */
+            for (int j = 0; j < unavailableCells.Count; j++)
+            {
+                if (cell == unavailableCells[j])
+                {
+                    canAddCell = false;
+                    break;
+                }
+            }
+
+            //canAddCell = unavailableCells.Contains(cell);
+
+            if(canAddCell == true)
+            {
+                unavailableCells.Add(cell);
+            }
         }
-
-        /*
-        Debug.Log("Unavaliable Cells");
-
-        for (int i = 0; i < UnavailableCells.Count; i++)
-        {
-            Debug.Log($"Cell: {UnavailableCells[i]}");
-        }
-
-        Debug.Log("END Unavaliable Cells");
-        */
 
         //  Take the UnavailableCells out from the fullGrid cell's list
         List<Vector2> fullGrid = GetFullGridCells();
@@ -79,13 +87,34 @@ public class MapGrid : MonoBehaviour
             int cellIndex = cellY * width + cellX;
             int finalIndex = cellIndex - i;
 
-            //Debug.Log($"Cell removed: {UnavailableCells[i]} => {fullGrid[finalIndex]} | Index: {cellIndex} y {finalIndex}");
-            fullGrid.RemoveAt(finalIndex);
+            try
+            {
+                fullGrid.RemoveAt(finalIndex);
+            }
+            catch 
+            {
+
+                Debug.Log($"Cell removed: {unavailableCells[i]} => {fullGrid.Count} | Index: {cellIndex} y {finalIndex}");
+
+                for (int j = 0; j < unavailableCells.Count; j++)
+                {
+                    Debug.Log(unavailableCells[j]);
+                }
+
+                //Debug.Log($"Cell removed: {unavailableCells[i]} => {fullGrid[finalIndex]} | Index: {cellIndex} y {finalIndex}");
+            }
         }
 
-        //  Return the position of a random cell from the fullGrid list, which doesn't contain any unavailable cell
-        Vector2 randomCell = fullGrid[UnityEngine.Random.Range(0, fullGrid.Count)];
-        result = FromCellToPosition(randomCell);
+        if (fullGrid.Count > 0)
+        {
+            //  Return the position of a random cell from the fullGrid list, which doesn't contain any unavailable cell
+            Vector2 randomCell = fullGrid[UnityEngine.Random.Range(0, fullGrid.Count)];
+            result = FromCellToPosition(randomCell);
+        }
+        else
+        {
+            result = null;
+        }
 
         return result;
     }

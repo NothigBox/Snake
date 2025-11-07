@@ -6,16 +6,23 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [Header("Panels")]
-    [SerializeField] GameObject home;
-    [SerializeField] GameObject gameplay;
-    [SerializeField] GameObject pause;
-    [SerializeField] GameObject result;
-    [SerializeField] GameObject settings;
-    [SerializeField] GameObject about;
+    [SerializeField] private GameObject home;
+    [SerializeField] private GameObject gameplay;
+    [SerializeField] private GameObject pause;
+    [SerializeField] private GameObject result;
+    [SerializeField] private GameObject settings;
+    [SerializeField] private GameObject about;
 
     [Header("Map Size Buttons")]
-    [SerializeField] Color SelectedColor;
-    [SerializeField] Button[] mapSizes;
+    [SerializeField] private Color selectedColor;
+    [SerializeField] private Image[] mapSizes;
+
+    private Color initialColor;
+
+    private void Awake()
+    {
+        initialColor = mapSizes[0].color;
+    }
 
     public void SetPanel(EUIPanel panel)
     {
@@ -61,7 +68,12 @@ public class UIManager : MonoBehaviour
 
     public void SetSelectedMapSize(int mapIndex)
     {
-        
+        for (int i = 0; i < mapSizes.Length; i++)
+        {
+            mapSizes[i].color = initialColor;
+        }
+
+        mapSizes[mapIndex].color = selectedColor;
     }
 }
 

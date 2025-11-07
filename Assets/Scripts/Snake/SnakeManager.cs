@@ -11,6 +11,7 @@ public class SnakeManager : MonoBehaviour
 
     [SerializeField] float movesPerSecond;
 
+    SnakePersonalization personalization;
     SnakeMovement movement;
     SnakeScore score;
     Animator animator;
@@ -24,6 +25,7 @@ public class SnakeManager : MonoBehaviour
 
     private void Awake()
     {
+        personalization = GetComponent<SnakePersonalization>();
         movement = GetComponent<SnakeMovement>();
         score = GetComponent<SnakeScore>();
         animator = GetComponent<Animator>();
@@ -191,6 +193,8 @@ public class SnakeManager : MonoBehaviour
 
         if(doLocalTurnLeft != null)
         {
+            personalization.SetHeadRotation(currentDirection);
+
             movement.ChangeDirection(doLocalTurnLeft.Value);
 
             //  After changing the direction, you can't change it again until the snake moves forward
