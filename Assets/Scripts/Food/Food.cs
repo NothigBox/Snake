@@ -7,7 +7,7 @@ public abstract class Food : PoolObject
 {
     public static Action<Food> OnEaten;
 
-    public void Eat()
+    public virtual void Eat()
     {
         OnEaten?.Invoke(this);
 
