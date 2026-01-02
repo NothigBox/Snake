@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+
     [Header("Panels")]
     [SerializeField] private GameObject home;
     [SerializeField] private GameObject gameplay;
@@ -12,6 +14,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject result;
     [SerializeField] private GameObject settings;
     [SerializeField] private GameObject about;
+    [SerializeField] private GameObject store;
+
+    [Header("Score")]
+    [SerializeField] private TextMeshProUGUI score;
+    [SerializeField] private TextMeshProUGUI finalScore;
 
     [Header("Map Size Buttons")]
     [SerializeField] private Color selectedColor;
@@ -43,6 +50,7 @@ public class UIManager : MonoBehaviour
                 break;
 
             case EUIPanel.Result:
+                finalScore.text = score.text;
                 result.SetActive(true);
                 break;
 
@@ -52,6 +60,10 @@ public class UIManager : MonoBehaviour
 
             case EUIPanel.About:
                 about.SetActive(true);
+                break;
+
+            case EUIPanel.Store:
+                store.SetActive(true);
                 break;
         }
     }
@@ -64,6 +76,7 @@ public class UIManager : MonoBehaviour
         result.SetActive(false);
         settings.SetActive(false);
         about.SetActive(false);
+        store.SetActive(false);
     }
 
     public void SetSelectedMapSize(int mapIndex)
@@ -75,6 +88,11 @@ public class UIManager : MonoBehaviour
 
         mapSizes[mapIndex].color = selectedColor;
     }
+
+    public void UpdateScore(int currentScore)
+    {
+        score.text = currentScore.ToString();
+    }
 }
 
-public enum EUIPanel { Home, Gameplay, Pause, Result, Settings, About }
+public enum EUIPanel { Home, Gameplay, Pause, Result, Settings, About, Store }

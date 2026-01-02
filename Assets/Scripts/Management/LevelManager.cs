@@ -12,12 +12,14 @@ public class LevelManager : MonoBehaviour
     [SerializeField] TouchManager touch;
     [SerializeField] SnakeManager snake;
     [SerializeField] FactoryController factory;
+    [SerializeField] ScoreManager score;
 
     private int initialApplesCount = 1;
 
     bool? isGameOver;
 
     public Action OnGameOver;
+    public Action<int> OnScoreUpdated;
 
     private Vector3 WorldScale => Vector3.one * map.CellSize;
 
@@ -54,12 +56,20 @@ public class LevelManager : MonoBehaviour
         SpawnLimits();
         SpawnInitialApples();
         FillTiles();
+
+        OnScoreUpdated?.Invoke(0);
     }
 
     void OnFoodEaten(Food food)
     {
+        score.AddScore(1);
+        
         SpawnBody();
         SpawnFoodAtRandomCell();
+
+        OnScoreUpdated?.Invoke(score.CurrentScore);
+
+        ValidateWinCondition()
     }
 
     void SpawnFoodAtRandomCell()
@@ -136,6 +146,8 @@ public class LevelManager : MonoBehaviour
 
     public void ClearLevel()
     {
+        score.ClearScore();
+
         factory.DeactivateAllObjects();
 
         snake.gameObject.SetActive(false);

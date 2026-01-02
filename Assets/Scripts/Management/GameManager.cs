@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         level.OnGameOver += GameOver;
+        level.OnScoreUpdated += UpdateScore;
     }
 
     private void Start()
@@ -41,6 +42,11 @@ public class GameManager : MonoBehaviour
     public void GoAbout()
     {
         ui.SetPanel(EUIPanel.About);
+    }
+
+    public void GoStore()
+    {
+        ui.SetPanel(EUIPanel.Store);
     }
 
     void GameOver()
@@ -99,5 +105,10 @@ public class GameManager : MonoBehaviour
     public void SetInitialApplesCount(float count)
     {
         level.SetInitialApplesCount((int) count);
+    }
+
+    private void UpdateScore(int currentScore)
+    {
+        ui.UpdateScore(currentScore);
     }
 }

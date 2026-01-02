@@ -8,9 +8,11 @@ public class Apple : Food
 
     public override void Eat()
     {
-        _particleSystem.Play();
+        _particleSystem.transform.localScale = transform.localScale;
         _particleSystem.transform.SetParent(null);
         _particleSystem.transform.position = transform.position;
+
+        _particleSystem.Play();
 
         base.Eat();
     }

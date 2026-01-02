@@ -42,18 +42,17 @@ public class MapGrid : MonoBehaviour
 
     public Vector2? GetRandomAvailablePosition(Transform[] unavailablePositions)
     {
-        //  Convert snake body's positions into cell coordinates
         Vector2? result = Vector2.zero;
 
         List<Vector2> unavailableCells = new List<Vector2>();
 
+        //  Convert snake body's positions into cell coordinates
         for (int i = 0; i < unavailablePositions.Length; i++)
         {
             bool canAddCell = true;
             Vector2 cell = FromPositionToCell(unavailablePositions[i].position);
 
-            /*
-            */
+            //  Avoid adding repeated cells
             for (int j = 0; j < unavailableCells.Count; j++)
             {
                 if (cell == unavailableCells[j])
@@ -63,14 +62,18 @@ public class MapGrid : MonoBehaviour
                 }
             }
 
-            //canAddCell = unavailableCells.Contains(cell);
-
             if(canAddCell == true)
             {
                 unavailableCells.Add(cell);
+
+                Debug.Log("Cell added: " + cell + ". Is default? => " + cell == default);
             }
         }
 
+        for (int j = 0;j < unavailableCells.Count; j++)
+        {
+            Debug.Log(unavailableCells[j]);
+        }
         //  Take the UnavailableCells out from the fullGrid cell's list
         List<Vector2> fullGrid = GetFullGridCells();
 
@@ -206,6 +209,12 @@ public class MapGrid : MonoBehaviour
         return row;
     }
 
+    [Header("Ajuste de UI")]
+    [SerializeField] float bannerHeightPixels = 140f; // Altura del banner en píxeles
+
+    /*
+    [SerializeField] bool bannerAtTop = true; // true = arriba, false = abajo
+
     public void CalculateCellSize()
     {
         Camera cam = Camera.main;
@@ -220,8 +229,81 @@ public class MapGrid : MonoBehaviour
         float cameraHeight = 2f * cam.orthographicSize;
         float cameraWidth = cameraHeight * cam.aspect;
 
+        // Convertir altura del banner de píxeles a unidades de mundo
+        float bannerHeightWorld = (bannerHeightPixels / Screen.height) * cameraHeight;
+
+        // Calcular área usable restando el banner y el padding
+        float usableHeight = cameraHeight - bannerHeightWorld - (padding * 2f);
+        float usableWidth = cameraWidth - (padding * 2f);
+
+        Debug.Log($"Pantalla: {Screen.width}x{Screen.height}px | Cámara: {cameraWidth:F2}x{cameraHeight:F2} unidades");
+        Debug.Log($"Banner: {bannerHeightPixels}px = {bannerHeightWorld:F2} unidades de mundo");
+        Debug.Log($"Área usable: {usableWidth:F2}x{usableHeight:F2} unidades");
+
+        // Calcular tamaño de celda según dimensión más restrictiva
+        float cellSizeByWidth = usableWidth / width;
+        float cellSizeByHeight = usableHeight / height;
+
+        // Elegir el tamaño apropiado
+        if (fillScreen)
+        {
+            cellSize = Mathf.Max(cellSizeByWidth, cellSizeByHeight);
+        }
+        else
+        {
+            cellSize = Mathf.Min(cellSizeByWidth, cellSizeByHeight);
+        }
+
+        Debug.Log($"Tamaño de celda calculado: {cellSize:F3} unidades | Grid: {width}x{height}");
+
+        // Calcular dimensiones reales del mapa
+        float mapWidth = width * cellSize;
+        float mapHeight = height * cellSize;
+
+        Debug.Log($"Dimensiones del mapa: {mapWidth:F2}x{mapHeight:F2} unidades");
+
+        // Calcular offset del banner
+        float bannerOffset = bannerAtTop ? -bannerHeightWorld / 2f : bannerHeightWorld / 2f;
+
+        // Centrar el mapa en el espacio disponible (considerando el banner)
+        Vector3 centerPosition = new Vector3(
+            -mapWidth / 2f,
+            (-mapHeight / 2f) + bannerOffset,
+            0
+        );
+
+        transform.position = centerPosition;
+
+        Debug.Log($"Posición del grid: {transform.position} (offset banner: {bannerOffset:F2})");
+
+        int centralCellX = Mathf.FloorToInt(width / 2f);
+        int centralCellY = Mathf.FloorToInt(height / 2f);
+        Vector2 position = FromCellToPosition(new Vector2(centralCellX, centralCellY));
+
+        OnCellSizeCalculated?.Invoke(cellSize, position);
+    }
+    */
+
+    
+    public void CalculateCellSize()
+    {
+        Camera cam = Camera.main;
+
+        if (cam == null)
+        {
+            Debug.LogError("No se encontró la cámara principal!");
+            return;
+        }
+
+        // Obtener dimensiones de la cámara en unidades de mundo
+        float cameraHeight = 2f * cam.orthographicSize;
+        float cameraWidth = cameraHeight * cam.aspect;
+
+        // Convertir altura del banner de píxeles a unidades de mundo
+        float bannerHeightWorld = (bannerHeightPixels / Screen.height) * cameraHeight;
+
         // Restar el padding
-        float usableHeight = cameraHeight - (padding * 2f);
+        float usableHeight = cameraHeight - bannerHeightWorld - (padding * 2f);
         float usableWidth = cameraWidth - (padding * 2f);
 
         //Debug.Log($"Pantalla: {Screen.width}x{Screen.height} | Cámara: {cameraWidth:F2}x{cameraHeight:F2} unidades");
@@ -250,10 +332,12 @@ public class MapGrid : MonoBehaviour
 
         //Debug.Log($"Dimensiones del mapa: {mapWidth:F2}x{mapHeight:F2} unidades");
 
+        float bannerOffset = -bannerHeightWorld / 2f;
+
         // Centrar el mapa en la pantalla
         Vector3 centerPosition = new Vector3(
             -mapWidth / 2f,
-            -mapHeight / 2f,
+            (-mapHeight / 2f) + bannerOffset,
             0
         );
 
@@ -286,6 +370,7 @@ public class MapGrid : MonoBehaviour
 
         OnCellSizeCalculated?.Invoke(cellSize, position);
     }
+
 
     public List<Vector2> GetLimitPositions()
     {
