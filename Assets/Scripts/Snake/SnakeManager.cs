@@ -23,6 +23,8 @@ public class SnakeManager : MonoBehaviour
     public Action OnDied;
     public Action OnInitialGrow;
 
+    public int InitialBodyCount => INITIAL_BODY_COUNT;
+
     private void Awake()
     {
         personalization = GetComponent<SnakePersonalization>();

@@ -69,7 +69,7 @@ public class LevelManager : MonoBehaviour
 
         OnScoreUpdated?.Invoke(score.CurrentScore);
 
-        ValidateWinCondition()
+        ValidateWinCondition();
     }
 
     void SpawnFoodAtRandomCell()
@@ -234,6 +234,18 @@ public class LevelManager : MonoBehaviour
             }
 
                 newTile.transform.localScale = WorldScale;
+        }
+    }
+
+    void ValidateWinCondition()
+    {
+        int totalCellCount = map.Width * map.Height;
+
+        bool winCondition = score.CurrentScore == (totalCellCount - snake.InitialBodyCount - 1);
+
+        if(winCondition == true)
+        {
+            Debug.Log("GANASTEEE!!!!");
         }
     }
 }

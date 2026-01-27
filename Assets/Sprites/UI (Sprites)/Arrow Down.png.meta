@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 458f864f6e8897f4a8795208b51e00e3
+guid: 445f0de011fcbe54788ea8a81efd4d43
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1421395844897490667
-    second: Apple Frame_0
+      213: -4192471393297714500
+    second: Arrow Down_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Apple Frame_0
+      name: Arrow Down_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: be6c4547dffc9b310800000000000000
-      internalID: 1421395844897490667
+      spriteID: cb2b08ffa7951d5c0800000000000000
+      internalID: -4192471393297714500
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Apple Frame_0: 1421395844897490667
+      Arrow Down_0: -4192471393297714500
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

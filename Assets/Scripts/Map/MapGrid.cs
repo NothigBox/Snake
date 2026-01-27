@@ -21,6 +21,7 @@ public class MapGrid : MonoBehaviour
     /// </summary>
     public float CellSize => cellSize;
     public int Width => width;
+    public int Height => height;
 
     private void OnDrawGizmos()
     {
