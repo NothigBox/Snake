@@ -37,6 +37,13 @@ public class GameManager : MonoBehaviour
     public void GoSettings()
     {
         ui.SetPanel(EUIPanel.Settings);
+
+        /*
+        if ()
+        {
+
+        }
+        */
     }
 
     public void GoAbout()
