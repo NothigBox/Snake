@@ -111,4 +111,9 @@ public class GameManager : MonoBehaviour
     {
         ui.UpdateScore(currentScore);
     }
+
+    public void GoDown()
+    {
+        ui.GoDown();
+    }
 }

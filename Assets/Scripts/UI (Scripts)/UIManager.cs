@@ -24,6 +24,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Color selectedColor;
     [SerializeField] private Image[] mapSizes;
 
+    [Header("Store")]
+    [SerializeField] private RectTransform storeContent;
+    [SerializeField] private float duration = 1f;
+
     private Color initialColor;
 
     private void Awake()
@@ -63,6 +67,7 @@ public class UIManager : MonoBehaviour
                 break;
 
             case EUIPanel.Store:
+                storeContent.anchoredPosition = new Vector2(storeContent.anchoredPosition.x, 0f);
                 store.SetActive(true);
                 break;
         }
@@ -92,6 +97,33 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int currentScore)
     {
         score.text = currentScore.ToString();
+    }
+
+    public void GoDown()
+    {
+        StartCoroutine(nameof(GoDownCoroutine));
+    }
+
+    IEnumerator GoDownCoroutine()
+    {
+        float elapsed = 0f;
+        float finalPosition = storeContent.sizeDelta.y;
+        Vector2 initialPosition = storeContent.anchoredPosition;
+        Vector2 targetPosition = new Vector2(initialPosition.x, finalPosition);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // Position interpolation
+            storeContent.anchoredPosition = Vector2.Lerp(initialPosition, targetPosition, t);
+
+            yield return null;
+        }
+
+        // Always get to the final position
+        storeContent.anchoredPosition = targetPosition;
     }
 }
 
